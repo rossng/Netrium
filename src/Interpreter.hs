@@ -22,7 +22,7 @@ import Control.Monad
 import Text.XML.HaXml.XmlContent hiding (next)
 import XmlUtils
 import Control.Exception (assert)
-
+import Text.XML.HaXml.Types
 
 -- ---------------------------------------------------------------------------
 -- * Main interpreter, using observables and choice data
@@ -378,20 +378,20 @@ instance XmlContent Output where
     parseContents = do
       e@(Elem t _ _) <- element ["Trade","OptionUntil","OptionForever"]
       commit $ interior e $ case t of
-        "Trade"         -> liftM4 Trade parseContents parseContents
+        N "Trade"         -> liftM4 Trade parseContents parseContents
                                         parseContents parseContents
-        "OptionUntil"   -> liftM2 OptionUntil   (attrStr "choiceid" e) parseContents
-        "OptionForever" -> liftM  OptionForever (attrStr "choiceid" e)
+        N "OptionUntil"   -> liftM2 OptionUntil   (attrStr (N "choiceid") e) parseContents
+        N "OptionForever" -> liftM  OptionForever (attrStr (N "choiceid") e)
 
     toContents (Trade p p' sf t)       = [mkElemC "Trade" (toContents p
                                                           ++ toContents p'
                                                           ++ toContents sf
                                                           ++ toContents t)]
-    toContents (OptionUntil cid time') = [mkElemAC "OptionUntil"
-                                                   [("choiceid", str2attr cid)]
+    toContents (OptionUntil cid time') = [mkElemAC (N "OptionUntil")
+                                                   [(N "choiceid", str2attr cid)]
                                                    (toContents time')]
-    toContents (OptionForever cid)     = [mkElemAC "OptionForever"
-                                                   [("choiceid", str2attr cid)] []]
+    toContents (OptionForever cid)     = [mkElemAC (N "OptionForever")
+                                                   [(N "choiceid", str2attr cid)] []]
 
 
 instance HTypeable StopReason where
@@ -403,14 +403,14 @@ instance XmlContent StopReason where
                                 ,"ChoiceRequired"
                                 ,"ObservationMissing","ObservationExhausted"]
       commit $ interior e $ case t of
-        "Finished"       -> return Finished
-        "StoppedTime"    -> return StoppedTime
-        "StoppedWait"    -> return StoppedWait
-        "WaitForever"    -> return WaitForever
-        "ChoiceRequired" -> liftM2 ChoiceRequired parseContents
-                                                  (attrStr "choiceid" e)
-        "ObservationMissing"   -> liftM ObservationMissing   (attrStr "var" e)
-        "ObservationExhausted" -> liftM ObservationExhausted (attrStr "var" e)
+        N "Finished"       -> return Finished
+        N "StoppedTime"    -> return StoppedTime
+        N "StoppedWait"    -> return StoppedWait
+        N "WaitForever"    -> return WaitForever
+        N "ChoiceRequired" -> liftM2 ChoiceRequired parseContents
+                                                  (attrStr (N "choiceid") e)
+        N "ObservationMissing"   -> liftM ObservationMissing   (attrStr (N "var") e)
+        N "ObservationExhausted" -> liftM ObservationExhausted (attrStr (N "var") e)
 
     toContents Finished    = [mkElemC "Finished"    []]
     toContents StoppedTime = [mkElemC "StoppedTime" []]
@@ -418,12 +418,12 @@ instance XmlContent StopReason where
     toContents WaitForever = [mkElemC "WaitForever" []]
 
     toContents (ChoiceRequired party choiceid) =
-        [mkElemAC "ChoiceRequired" [("choiceid", str2attr choiceid)]
+        [mkElemAC (N "ChoiceRequired") [(N "choiceid", str2attr choiceid)]
                                    (toContents party)]
     toContents (ObservationExhausted varname) =
-        [mkElemAC "ObservationExhausted" [("var", str2attr varname)] []]
+        [mkElemAC (N "ObservationExhausted") [(N "var", str2attr varname)] []]
     toContents (ObservationMissing   varname) =
-        [mkElemAC "ObservationMissing" [("var", str2attr varname)] []]
+        [mkElemAC (N "ObservationMissing") [(N "var", str2attr varname)] []]
 
 
 instance HTypeable StopWait where
@@ -433,8 +433,8 @@ instance XmlContent StopWait where
   parseContents = (do
     e@(Elem t _ _) <- element ["StopFirstWait", "StopNextWait"]
     commit $ interior e $ case t of
-      "StopFirstWait" -> return StopFirstWait
-      "StopNextWait"  -> return StopNextWait)
+      N "StopFirstWait" -> return StopFirstWait
+      N "StopNextWait"  -> return StopNextWait)
     `onFail` return NoStop
 
   toContents NoStop        = []

@@ -1,4 +1,7 @@
 import Options
+import Common
+import Contract
+
 
 contract =
     option "opt" exerciseDetails CallOption emptyOptionAttrs underlying
@@ -14,7 +17,7 @@ contract =
 
     -- simple european exercise
 
-    exerciseDetails = europeanExercise (date 2013 06 01) strikePrice
+    exerciseDetails = europeanExercise (date 2018 06 01) strikePrice
 
     -- the strike price can be set at e.g. the weighted value of the basket currencies in gbp
 

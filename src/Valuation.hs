@@ -2,18 +2,20 @@
 -- |under the MIT license,  the text of which can be found in license.txt
 --
 -- Module for valuation semantics
+{-# LANGUAGE GADTs #-}
+
 module Valuation where
 
-import Prelude hiding (or, min, abs, negate, not, read, until)
-import Contract hiding (and, max)
-import Observable hiding(max)
+import           Contract       hiding (and, max)
+import           Observable     hiding (max)
+import           Prelude        hiding (abs, min, negate, not, or, read, until)
 
-import Numeric
-import Data.Time
-import Data.Monoid
+import           Data.Monoid
+import           Data.Time
+import           Numeric
 
-import System.Process
-import System.Exit
+import           System.Exit
+import           System.Process
 
 -- *Value Processes
 -- **The basics
@@ -108,10 +110,10 @@ rateModels = [((Currency "CHF"), rates 7   0.8)
 
 -- |Function to pick an exchange rate model from the above list
 rateModel k =
-	case lookup k rateModels of
-		Just x -> x
-		Nothing -> error $ "rateModel: currency not found " ++ (show k)
-			
+  case lookup k rateModels of
+    Just x  -> x
+    Nothing -> error $ "rateModel: currency not found " ++ (show k)
+
 -- *Process primitives
 -- |Constant process
 bigK :: a -> PR a
@@ -175,8 +177,8 @@ snell k (PR bs, prd) = prd -- stub, doesn't do anything
 -- **Simple calculation
 -- |Calculates a previous slice in a lattice by averaging each adjacent pair of values in the specified slice
 prevSlice :: RV Double -> RV Double
-prevSlice [] = []
-prevSlice (_:[]) = []
+prevSlice []               = []
+prevSlice (_:[])           = []
 prevSlice (n1:rest@(n2:_)) = (n1+n2)/2 : prevSlice rest
 
 -- |Constructs a lattice containing possible interest rates given a starting rate and an increment per time step. This \"unrealistically regular\" model matches that shown in B:Fig.8. However, it is so simple that some interest rates go negative after a small number of time steps. A better model is needed for real applications. Don't use this to model your retirement fund!
@@ -192,13 +194,13 @@ rates rateNow delta = PR $ makeRateSlices rateNow 1
 -- \"...in our very simple setting the number of paths from the root to the node is proportional to the probability that the variable will take that value.\"
 probabilityLattice :: [RV Double]
 probabilityLattice = probabilities pathCounts
-	   where
-	     probabilities :: [RV Integer] -> [RV Double]
-	     probabilities (sl:sls) = map (\n -> (fromInteger n) / (fromInteger (sum sl))) sl : probabilities sls
+  where
+     probabilities :: [RV Integer] -> [RV Double]
+     probabilities (sl:sls) = map (\n -> (fromInteger n) / (fromInteger (sum sl))) sl : probabilities sls
 
--- To calculate the number of paths to each node in a lattice, simply add the number of paths to the pair of parent nodes. This needs to work with Integers as opposed to Ints, because: findIndex (\sl -> maximum sl > (fromIntegral (maxBound::Int))) pathCounts ==> Just 67
-	     pathCounts :: [RV Integer]
-	     pathCounts = paths [1] where paths sl = sl : (paths (zipWith (+) (sl++[0]) (0:sl)))
+  -- To calculate the number of paths to each node in a lattice, simply add the number of paths to the pair of parent nodes. This needs to work with Integers as opposed to Ints, because: findIndex (\sl -> maximum sl > (fromIntegral (maxBound::Int))) pathCounts ==> Just 67
+     pathCounts :: [RV Integer]
+     pathCounts = paths [1] where paths sl = sl : (paths (zipWith (+) (sl++[0]) (0:sl)))
 
 -- **Expected value
 -- |The code for absorb above does not obviously deal with the expected value mentioned in the spec. This is because the expected value of each random variable is implicit in the value process lattice representation: each node in the lattice is associated with a probability, and the expected value at a particular date is simply the sum of the product of the value at each node and its associated probability. The following functions implement this calculation.
@@ -228,6 +230,9 @@ evalC (Model modelDate exch) k = eval
 -- |Evaluate a constant observable
 evalO :: Obs a -> PR a
 evalO (Const v) =  bigK v
+-- evalO (At t)    =  bigK $ isTrue t (at t)
+
+
 
 -- *Functions for Graphviz output
 -- |This code generates graphs which represent a value process lattice. Currently assumes Double values, constrained by showNode's formatting of the value.

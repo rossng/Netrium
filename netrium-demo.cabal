@@ -16,7 +16,8 @@ data-files:         normalise-wrapper.hs
                     Swaps.hs
                     Credit.hs
                     Settlement.hs
-		    ScheduledProduct.hs
+		                ScheduledProduct.hs
+                    Pricing.hs
 extra-source-files: examples/Units.db.xml
                     examples/*.hs
                     examples/*.contract
@@ -39,11 +40,19 @@ library
                     Interpreter
                     XmlUtils
                     Valuation
+                    Common
+                    Options
+                    Calendar
+                    Credit
+                    Swaps
+
   build-depends:    base       >= 3.0 && < 5,
                     containers >= 0.3 && < 1,
                     process    >= 1.0 && < 2,
                     time       >= 1.1 && < 2,
-                    HaXml      == 1.20.*
+                    HaXml      >= 1.20,
+                    dates      >= 0.2,
+                    array      >= 0.5
 
 executable normalise
   hs-source-dirs:   tool
@@ -53,7 +62,7 @@ executable normalise
                     process    >= 1.0 && < 2,
                     filepath   >= 1.1 && < 2,
                     directory  >= 1.0 && < 2,
-                    HaXml      == 1.20.*
+                    HaXml      >= 1.20
 
 executable simulate
   hs-source-dirs:   tool
@@ -61,8 +70,8 @@ executable simulate
   build-depends:    netrium-demo,
                     base       >= 3.0 && < 5,
                     containers >= 0.3 && < 1,
-                    HaXml      == 1.20.*,
-                    pretty     == 1.0.*,
+                    HaXml      >= 1.20,
+                    pretty     >= 1.0,
                     directory  >= 1.0 && < 2,
                     filepath
 
@@ -74,4 +83,4 @@ executable visualise
                     directory  >= 1.0 && < 2,
                     filepath,
                     process    >= 1.0 && < 2,
-                    HaXml      == 1.20.*
+                    HaXml      >= 1.20

@@ -5,7 +5,7 @@ module UnitsDB where
 
 import Control.Monad              (liftM, liftM2)
 import Text.XML.HaXml.XmlContent
-
+import Text.XML.HaXml.Types
 import XmlUtils
 
 newtype UnitsDB = UnitsDB { unUnitsDB :: [UnitDecl] }
@@ -36,22 +36,22 @@ instance XmlContent UnitDecl where
                                "UnitDecl",
                                "LocationDecl", "CurrencyDecl"]
     commit $ interior e $ case t of
-      "CashFlowTypeDecl"  -> liftM CashFlowTypeDecl  (attrStr "name" e)
-      "CommodityDecl"     -> liftM CommodityDecl     (attrStr "name" e)
-      "UnitDecl"          -> liftM UnitDecl          (attrStr "name" e)
-      "LocationDecl"      -> liftM LocationDecl      (attrStr "name" e)
-      "CurrencyDecl"      -> liftM CurrencyDecl      (attrStr "name" e)
+      N "CashFlowTypeDecl"  -> liftM CashFlowTypeDecl  (attrStr (N "name") e)
+      N "CommodityDecl"     -> liftM CommodityDecl     (attrStr (N "name") e)
+      N "UnitDecl"          -> liftM UnitDecl          (attrStr (N "name") e)
+      N "LocationDecl"      -> liftM LocationDecl      (attrStr (N "name") e)
+      N "CurrencyDecl"      -> liftM CurrencyDecl      (attrStr (N "name") e)
 
   toContents (CommodityDecl n ) =
-    [mkElemAC "CommodityDecl" [("name", str2attr n)] []]
+    [mkElemAC (N "CommodityDecl") [((N "name"), str2attr n)] []]
   toContents (CashFlowTypeDecl n ) =
-    [mkElemAC "CashFlowTypeDecl" [("name", str2attr n)] []]
+    [mkElemAC (N "CashFlowTypeDecl") [((N "name"), str2attr n)] []]
   toContents (UnitDecl n ) =
-    [mkElemAC "UnitDecl" [("name", str2attr n)] []]
+    [mkElemAC (N "UnitDecl") [((N "name"), str2attr n)] []]
   toContents (LocationDecl n ) =
-    [mkElemAC "LocationDecl" [("name", str2attr n)] []]
+    [mkElemAC (N "LocationDecl") [((N "name"), str2attr n)] []]
   toContents (CurrencyDecl n ) =
-    [mkElemAC "CurrencyDecl" [("name", str2attr n)] []]
+    [mkElemAC (N "CurrencyDecl") [((N "name"), str2attr n)] []]
 
 
 compileUnitsDB :: UnitsDB -> String

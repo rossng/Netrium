@@ -111,7 +111,7 @@ rateModel k =
 	case lookup k rateModels of
 		Just x -> x
 		Nothing -> error $ "rateModel: currency not found " ++ (show k)
-			
+
 -- *Process primitives
 -- |Constant process
 bigK :: a -> PR a

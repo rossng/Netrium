@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<SimulationInputs>
+	<Time>2017-10-14 14:21:44 UTC</Time>
+	<ObservationSeries type="Double" var="cpardAmount">
+		<SeriesEntry>
+			<Time>2018-06-01 00:00:00 UTC</Time>
+			<Double>5</Double>
+		</SeriesEntry>
+		<SeriesUnbounded/>
+	</ObservationSeries>
+	<Choices>
+    <SeriesEntry>
+      <Time>2018-06-01 00:00:00 UTC</Time>
+      <Choice choiceid="opt"><True/></Choice>
+    </SeriesEntry>
+  </Choices>
+</SimulationInputs>

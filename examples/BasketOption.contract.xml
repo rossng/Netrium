@@ -1,0 +1,42 @@
+<?xml version='1.0' ?>
+<When
+  ><At
+  >2018-06-01 00:00:00 UTC</At
+  ><Or choiceid="opt"
+    ><And
+      ><And
+        ><Scale
+          ><Const
+          >100.0</Const
+          ><One
+            ><Financial
+              ><Currency
+              >usd</Currency
+              ><CashFlowType
+              >cash</CashFlowType></Financial></One></Scale
+        ><Scale
+          ><Const
+          >100.0</Const
+          ><One
+            ><Financial
+              ><Currency
+              >eur</Currency
+              ><CashFlowType
+              >cash</CashFlowType></Financial></One></Scale></And
+      ><Give
+        ><Scale
+          ><Mul
+            ><Mul
+              ><Const
+              >0.78</Const
+              ><Const
+              >2.0</Const></Mul
+            ><Const
+            >100.0</Const></Mul
+          ><One
+            ><Financial
+              ><Currency
+              >gbp</Currency
+              ><CashFlowType
+              >cash</CashFlowType></Financial></One></Scale></Give></And
+    ><Zero/></Or></When>

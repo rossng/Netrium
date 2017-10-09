@@ -38,7 +38,6 @@ type PriceCurve = [Price]
 -- | Markets, e.g. UK Power (Electricity MWh UK), NBP Gas (Gas TH UK)
 data Market  = Mkt Commodity Unit Location
 
-mkt :: Commodity -> Unit -> Location -> Market
 mkt = Mkt
 -- | Index, e.g. SPX
 type Index  = Obs Double

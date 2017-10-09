@@ -48,7 +48,7 @@ import XmlUtils
 import Prelude hiding (product, read, until, and, or, min, max, abs, not, negate)
 import Control.Monad hiding (when)
 import Text.XML.HaXml.XmlContent
-
+import Text.XML.HaXml.Types
 -- * Contract type definition
 -- | A canonical tradeable element, physical or financial
 data Tradeable = Physical  Commodity Unit Location (Maybe Duration) (Maybe Portfolio)
@@ -201,10 +201,10 @@ instance XmlContent Tradeable where
   parseContents = do
     e@(Elem t _ _) <- element ["Physical","Financial"]
     commit $ interior e $ case t of
-      "Physical"  -> liftM5 Physical  parseContents parseContents
+      N "Physical"  -> liftM5 Physical  parseContents parseContents
                                       parseContents parseContents
                                       parseContents
-      "Financial" -> liftM3 Financial parseContents parseContents
+      N "Financial" -> liftM3 Financial parseContents parseContents
                                       parseContents
 
   toContents (Physical c u l d p) =
@@ -272,32 +272,32 @@ instance XmlContent Contract where
     e@(Elem t _ _) <- element ["Zero","When","Until","Scale","Read"
                               ,"Or","One","Give","Party","Cond","Anytime","And"]
     commit $ interior e $ case t of
-      "Zero"    -> return Zero
-      "One"     -> liftM  One     parseContents
-      "Give"    -> liftM  Give    parseContents
-      "Party"   -> liftM2 Party   (attrStr "name" e) parseContents
-      "And"     -> liftM2 And     parseContents parseContents
-      "Or"      -> liftM3 Or      (attrStr "choiceid" e) parseContents parseContents
-      "Cond"    -> liftM3 Cond    parseObsCond  parseContents parseContents
-      "Scale"   -> liftM2 Scale   parseObsReal  parseContents
-      "Read"    -> liftM3 Read    (attrStr "var" e) parseObsReal  parseContents
-      "When"    -> liftM2 When    parseObsCond  parseContents
-      "Anytime" -> liftM3 Anytime (attrStr "choiceid" e) parseObsCond  parseContents
-      "Until"   -> liftM2 Until   parseObsCond  parseContents
+      N "Zero"    -> return Zero
+      N "One"     -> liftM  One     parseContents
+      N "Give"    -> liftM  Give    parseContents
+      N "Party"   -> liftM2 Party   (attrStr (N "name") e) parseContents
+      N "And"     -> liftM2 And     parseContents parseContents
+      N "Or"      -> liftM3 Or      (attrStr (N "choiceid") e) parseContents parseContents
+      N "Cond"    -> liftM3 Cond    parseObsCond  parseContents parseContents
+      N "Scale"   -> liftM2 Scale   parseObsReal  parseContents
+      N "Read"    -> liftM3 Read    (attrStr (N "var") e) parseObsReal  parseContents
+      N "When"    -> liftM2 When    parseObsCond  parseContents
+      N "Anytime" -> liftM3 Anytime (attrStr (N "choiceid") e) parseObsCond  parseContents
+      N "Until"   -> liftM2 Until   parseObsCond  parseContents
 
   toContents Zero           = [mkElemC  "Zero" []]
   toContents (One t)        = [mkElemC  "One"  (toContents t)]
   toContents (Give c)       = [mkElemC  "Give" (toContents c)]
-  toContents (Party p c)    = [mkElemAC "Party" [("name", str2attr p)]
+  toContents (Party p c)    = [mkElemAC (N "Party") [(N "name", str2attr p)]
                                                 (toContents c)]
   toContents (And    c1 c2) = [mkElemC  "And"  (toContents c1 ++ toContents c2)]
-  toContents (Or cid c1 c2) = [mkElemAC "Or"   [("choiceid", str2attr cid)]
+  toContents (Or cid c1 c2) = [mkElemAC (N "Or")   [(N "choiceid", str2attr cid)]
                                                (toContents c1 ++ toContents c2)]
   toContents (Cond o c1 c2) = [mkElemC  "Cond" (printObs o : toContents c1 ++ toContents c2)]
   toContents (Scale  o c)      = [mkElemC  "Scale"   (printObs o : toContents c)]
-  toContents (Read n o c)      = [mkElemAC "Read"    [("var", str2attr n)]
+  toContents (Read n o c)      = [mkElemAC (N "Read")    [(N "var", str2attr n)]
                                                      (printObs o : toContents c)]
   toContents (When   o c)      = [mkElemC  "When"    (printObs o : toContents c)]
-  toContents (Anytime cid o c) = [mkElemAC "Anytime" [("choiceid", str2attr cid)]
+  toContents (Anytime cid o c) = [mkElemAC (N "Anytime") [(N "choiceid", str2attr cid)]
                                                      (printObs o : toContents c)]
   toContents (Until  o c)      = [mkElemC  "Until"   (printObs o : toContents c)]

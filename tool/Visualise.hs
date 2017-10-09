@@ -6,6 +6,8 @@
 module Main where
 
 import Contract
+import Common
+import Options
 import DecisionTreeSimplify
 import Display
 import Paths_netrium_demo

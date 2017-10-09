@@ -3,7 +3,7 @@ module Common where
 
 import Prelude hiding (and, or, min, max, abs, negate, not, read, all, until)
 import Contract
-import Data.Time
+import Data.Time hiding (months)
 
 --
 -- Common types
@@ -55,7 +55,7 @@ instance Num DateOffset where
     DateOffset (y1-y2) (m1-m2) (d1-d2)
 
   (*) = error "Multiplying date offsets makes no sense"
-  
+
   negate (DateOffset y1 m1 d1) =
     DateOffset (negate y1) (negate m1) (negate d1)
 
@@ -99,15 +99,15 @@ allOf xs = foldr1 and xs
 
 physical :: Volume -> Market -> Contract
 physical vol (Market comod unit loc) =
-    scale vol (one (Physical comod unit loc Nothing))
+  scale vol (one (Physical comod unit loc Nothing Nothing))
 
 physicalWithDuration :: Volume -> Market -> Duration -> Contract
 physicalWithDuration vol (Market comod unit loc) dur =
-    scale vol (one (Physical comod unit loc (Just dur)))
+  scale vol (one (Physical comod unit loc (Just dur) Nothing))
 
 financial :: Price -> Currency -> Contract
 financial pr cur =
-    scale pr (one (Financial cur))
+  scale pr (one (Financial cur (CashFlowType "cash") Nothing))
 
 fixedPrice :: Double -> Price
 fixedPrice pr = konst pr
@@ -259,7 +259,7 @@ andFee (FeeCalc fc1) (FeeCalc fc2) =
 --
 
 european :: Time -> Contract -> Contract
-european exTime c = when (at exTime) $ or "choice" c zero 
+european exTime c = when (at exTime) $ or "choice" c zero
 
 
 --

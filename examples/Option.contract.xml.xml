@@ -1,0 +1,39 @@
+<?xml version='1.0' ?>
+<SimulationResult
+  ><SeriesEntry
+    ><Time
+    >2018-06-01 00:00:00 UTC</Time
+    ><Trade
+      ><Party
+      /><Counterparty
+      /><Double
+      >10.0</Double
+      ><Physical
+        ><Commodity
+        >gas</Commodity
+        ><Unit
+        >thm</Unit
+        ><Location
+        >nbp</Location></Physical></Trade></SeriesEntry
+  ><SeriesEntry
+    ><Time
+    >2018-06-01 00:00:00 UTC</Time
+    ><Trade
+      ><Counterparty
+      /><Party
+      /><Double
+      >25.0</Double
+      ><Financial
+        ><Currency
+        >gbp</Currency
+        ><CashFlowType
+        >cash</CashFlowType></Financial></Trade></SeriesEntry
+  ><Finished
+  /><Time
+  >2018-06-01 00:00:00 UTC</Time
+  ><Zero
+  /><ProcessState
+    ><Time
+    >2018-06-01 00:00:00 UTC</Time
+    ><BlockedThreads
+    /><RunnableThreads/></ProcessState></SimulationResult>

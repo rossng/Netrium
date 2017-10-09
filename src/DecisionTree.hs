@@ -14,7 +14,7 @@ import Prelude hiding (product, until, and)
 import Data.List hiding (and)
 import Control.Monad hiding (when)
 import Text.XML.HaXml.XmlContent
-
+import Text.XML.HaXml.Types
 -- ---------------------------------------------------------------------------
 -- * Contract decision trees
 -- ---------------------------------------------------------------------------
@@ -403,9 +403,9 @@ instance XmlContent Party where
   parseContents = do
     e@(Elem t _ _) <- element ["Party", "Counterparty", "ThirdParty"]
     commit $ interior e $ case t of
-      "Party"        -> return FirstParty
-      "Counterparty" -> return Counterparty
-      "ThirdParty"   -> liftM  ThirdParty text
+      N "Party"        -> return FirstParty
+      N "Counterparty" -> return Counterparty
+      N "ThirdParty"   -> liftM  ThirdParty text
 
   toContents FirstParty     = [mkElemC "Party"  []]
   toContents Counterparty   = [mkElemC "Counterparty" []]
@@ -421,14 +421,14 @@ instance XmlContent TradeDir where
                               ,"TradeDir1ToP","TradeDir2ToP"
                               ,"TradeDirPToQ","TradeDirQToP"]
     commit $ interior e $ case t of
-      "TradeDir2To1" -> return TradeDir2To1
-      "TradeDir1To2" -> return TradeDir1To2
-      "TradeDirPTo1" -> liftM TradeDirPTo1 text
-      "TradeDirPTo2" -> liftM TradeDirPTo2 text
-      "TradeDir1ToP" -> liftM TradeDir1ToP text
-      "TradeDir2ToP" -> liftM TradeDir2ToP text
-      "TradeDirPToQ" -> liftM2 TradeDirPToQ text text
-      "TradeDirQToP" -> liftM2 TradeDirQToP text text
+      N "TradeDir2To1" -> return TradeDir2To1
+      N "TradeDir1To2" -> return TradeDir1To2
+      N "TradeDirPTo1" -> liftM TradeDirPTo1 text
+      N "TradeDirPTo2" -> liftM TradeDirPTo2 text
+      N "TradeDir1ToP" -> liftM TradeDir1ToP text
+      N "TradeDir2ToP" -> liftM TradeDir2ToP text
+      N "TradeDirPToQ" -> liftM2 TradeDirPToQ text text
+      N "TradeDirQToP" -> liftM2 TradeDirQToP text text
 
   toContents TradeDir2To1     = [mkElemC "TradeDir2To1"  []]
   toContents TradeDir1To2     = [mkElemC "TradeDir1To2"  []]
@@ -446,9 +446,9 @@ instance XmlContent c => XmlContent (Blocked c) where
   parseContents = do
     e@(Elem t _ _) <- element ["BlockedOnWhen", "BlockedOnAnytime"]
     commit $ interior e $ case t of
-      "BlockedOnWhen"    -> liftM2 BlockedOnWhen (fmap unObsCondition parseContents)
+      N "BlockedOnWhen"    -> liftM2 BlockedOnWhen (fmap unObsCondition parseContents)
                                                  parseContents
-      "BlockedOnAnytime" -> liftM4 BlockedOnAnytime parseContents
+      N "BlockedOnAnytime" -> liftM4 BlockedOnAnytime parseContents
                                                     (inElement "ChoiceId" text)
                                                     (fmap unObsCondition parseContents)
                                                     parseContents

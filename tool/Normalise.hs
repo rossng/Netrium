@@ -3,29 +3,33 @@
 --
 module Main where
 
-import ObservableDB
-import UnitsDB
-import Paths_netrium_demo
+import           ObservableDB
+import           Paths_netrium_demo
+import           UnitsDB
 
-import Control.Monad      (liftM, liftM2, when)
-import Data.Version
-import System.Environment (getArgs, getProgName)
-import System.Exit        (exitFailure, exitWith, ExitCode(..))
-import System.Directory   (getTemporaryDirectory, canonicalizePath, removeFile)
-import System.IO          (openTempFile, hPutStr, hClose)
-import System.Process     (runProcess, waitForProcess)
-import System.FilePath    ((</>), dropExtension, addExtension, takeDirectory)
-import System.Console.GetOpt
-import Text.XML.HaXml.XmlContent
+import           Control.Monad             (liftM, liftM2, when)
+import           Data.Version
+import           System.Console.GetOpt
+import           System.Directory          (canonicalizePath,
+                                            getTemporaryDirectory, removeFile)
+import           System.Environment        (getArgs, getProgName)
+import           System.Exit               (ExitCode (..), exitFailure,
+                                            exitWith)
+import           System.FilePath           (addExtension, dropExtension,
+                                            takeDirectory, (</>))
+import           System.IO                 (hClose, hPutStr, openTempFile)
+import           System.Process            (runProcess, waitForProcess)
+import           Text.XML.HaXml.Types
+import           Text.XML.HaXml.XmlContent
 
 
 data Options =
   Options
-    { optObsDBs  :: [FilePath]
-    , optUnitDBs :: [FilePath]
+    { optObsDBs     :: [FilePath]
+    , optUnitDBs    :: [FilePath]
     , optImportDirs :: [FilePath]
-    , optFast    :: Bool
-    , optVersion :: Bool
+    , optFast       :: Bool
+    , optVersion    :: Bool
     }
 
 defaultOptions =
@@ -57,13 +61,14 @@ options = [Option [] ["obs-db"]
 
 main :: IO ()
 main =
+
   do
     plainArgs <- getArgs
     let (optMods, args, errs) = getOpt Permute options plainArgs
     let opts = foldl (flip ($)) defaultOptions optMods
     case args of
       _ | optVersion opts         -> printVersion
-      [input]         | null errs -> normalise opts input output 
+      [input]         | null errs -> normalise opts input output
                                        where output = addExtension input "xml"
       [input, output] | null errs -> normalise opts input output
       _                           -> exit
@@ -115,9 +120,10 @@ normalise opts input output =
 
     -- compile and run it
     ddir <- getDataDir
-    let ghcargs = [ "-package", "netrium-demo-" ++ showVersion version ]
-               ++ [ "-i" ++ dir | dir <- ddir : optImportDirs opts ++ [cdir] ]
-        args    = map ("--ghc-arg="++) ghcargs ++ [fp]
+    let ghcargs = [ "-package", "netrium-demo-"  ++ showVersion version ]
+                ++ [ "-i" ++ dir | dir <- ddir : optImportDirs opts ++ [cdir] ]
+        args    = ghcargs ++ [fp]
+    print args
     ph <- runProcess "runghc" args Nothing Nothing Nothing Nothing Nothing
     exit <- waitForProcess ph
     removeFile fp

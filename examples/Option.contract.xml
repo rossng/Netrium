@@ -1,0 +1,37 @@
+<?xml version='1.0' ?>
+<When
+  ><Lte
+    ><NamedVal
+    >temperatureUK</NamedVal
+    ><Const
+    >5.0</Const></Lte
+  ><When
+    ><At
+    >2018-06-01 00:00:00 UTC</At
+    ><Or choiceid="opt"
+      ><And
+        ><Scale
+          ><Const
+          >10.0</Const
+          ><One
+            ><Physical
+              ><Commodity
+              >gas</Commodity
+              ><Unit
+              >thm</Unit
+              ><Location
+              >nbp</Location></Physical></One></Scale
+        ><Give
+          ><Scale
+            ><Mul
+              ><Const
+              >2.5</Const
+              ><Const
+              >10.0</Const></Mul
+            ><One
+              ><Financial
+                ><Currency
+                >gbp</Currency
+                ><CashFlowType
+                >cash</CashFlowType></Financial></One></Scale></Give></And
+      ><Zero/></Or></When></When>

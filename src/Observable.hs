@@ -50,6 +50,7 @@ import Text.Show.Functions ()
 import Text.XML.HaXml.XmlContent
   (XMLParser(), Element(..), Content(), element, interior, text, toText, mkElemC)
 
+import Text.XML.HaXml.Types
 -- * Observable type definition
 -- | We use a continuous model of time.
 type Time  = UTCTime
@@ -729,34 +730,34 @@ parseObsReal = do
                             ,"Neg","Abs","Sqrt","Exp","Log","Sin","Cos","Asin","Acos","Atan","Sinh","Cosh","Asinh","Acosh","Atanh","Add","Sub","Mul","Div","Min","Max"]
 
   case t of
-    "Const"    -> interior e $ liftM Const readText
-    "Var"      -> interior e $ liftM Var text
-    "NamedVal" -> interior e $ liftM NamedVal text
+    N "Const"    -> interior e $ liftM Const readText
+    N "Var"      -> interior e $ liftM Var text
+    N "NamedVal" -> interior e $ liftM NamedVal text
 
-    "Neg"   -> interior e $ liftM (UnOp Neg) parseObsReal
-    "Abs"   -> interior e $ liftM (UnOp Abs) parseObsReal
-    "Sqrt"  -> interior e $ liftM (UnOp Sqrt) parseObsReal
-    "Exp"   -> interior e $ liftM (UnOp Exp) parseObsReal
-    "Log"   -> interior e $ liftM (UnOp Log) parseObsReal
-    "Sin"   -> interior e $ liftM (UnOp Sin) parseObsReal
-    "Cos"   -> interior e $ liftM (UnOp Cos) parseObsReal
-    "Asin"  -> interior e $ liftM (UnOp Asin) parseObsReal
-    "Acos"  -> interior e $ liftM (UnOp Acos) parseObsReal
-    "Atan"  -> interior e $ liftM (UnOp Atan) parseObsReal
-    "Sinh"  -> interior e $ liftM (UnOp Sinh) parseObsReal
-    "Cosh"  -> interior e $ liftM (UnOp Cosh) parseObsReal
-    "Asinh" -> interior e $ liftM (UnOp Asinh) parseObsReal
-    "Acosh" -> interior e $ liftM (UnOp Acosh) parseObsReal
-    "Atanh" -> interior e $ liftM (UnOp Atanh) parseObsReal
+    N "Neg"   -> interior e $ liftM (UnOp Neg) parseObsReal
+    N "Abs"   -> interior e $ liftM (UnOp Abs) parseObsReal
+    N "Sqrt"  -> interior e $ liftM (UnOp Sqrt) parseObsReal
+    N "Exp"   -> interior e $ liftM (UnOp Exp) parseObsReal
+    N "Log"   -> interior e $ liftM (UnOp Log) parseObsReal
+    N "Sin"   -> interior e $ liftM (UnOp Sin) parseObsReal
+    N "Cos"   -> interior e $ liftM (UnOp Cos) parseObsReal
+    N "Asin"  -> interior e $ liftM (UnOp Asin) parseObsReal
+    N "Acos"  -> interior e $ liftM (UnOp Acos) parseObsReal
+    N "Atan"  -> interior e $ liftM (UnOp Atan) parseObsReal
+    N "Sinh"  -> interior e $ liftM (UnOp Sinh) parseObsReal
+    N "Cosh"  -> interior e $ liftM (UnOp Cosh) parseObsReal
+    N "Asinh" -> interior e $ liftM (UnOp Asinh) parseObsReal
+    N "Acosh" -> interior e $ liftM (UnOp Acosh) parseObsReal
+    N "Atanh" -> interior e $ liftM (UnOp Atanh) parseObsReal
 
-    "Add" -> interior e $ liftM2 (BinOp Add) parseObsReal parseObsReal
-    "Sub" -> interior e $ liftM2 (BinOp Sub) parseObsReal parseObsReal
-    "Mul" -> interior e $ liftM2 (BinOp Mul) parseObsReal parseObsReal
-    "Div" -> interior e $ liftM2 (BinOp Div) parseObsReal parseObsReal
-    "Min" -> interior e $ liftM2 (BinOp Min) parseObsReal parseObsReal
-    "Max" -> interior e $ liftM2 (BinOp Max) parseObsReal parseObsReal
+    N "Add" -> interior e $ liftM2 (BinOp Add) parseObsReal parseObsReal
+    N "Sub" -> interior e $ liftM2 (BinOp Sub) parseObsReal parseObsReal
+    N "Mul" -> interior e $ liftM2 (BinOp Mul) parseObsReal parseObsReal
+    N "Div" -> interior e $ liftM2 (BinOp Div) parseObsReal parseObsReal
+    N "Min" -> interior e $ liftM2 (BinOp Min) parseObsReal parseObsReal
+    N "Max" -> interior e $ liftM2 (BinOp Max) parseObsReal parseObsReal
 
-    "IfThen" -> interior e $ liftM3 IfThen parseObsCond parseObsReal parseObsReal
+    N "IfThen" -> interior e $ liftM3 IfThen parseObsCond parseObsReal parseObsReal
 
 -- | XML parser for condition observables
 parseObsCond :: XMLParser (Obs Bool)
@@ -765,23 +766,23 @@ parseObsCond = do
                             ,"Not","And","Or","Eq","Gt","Gte","Lt","Lte"]
 
   case t of
-    "Const"     -> interior e $ liftM Const readText
-    "NamedCond" -> interior e $ liftM NamedCond text
+    N "Const"     -> interior e $ liftM Const readText
+    N "NamedCond" -> interior e $ liftM NamedCond text
 
-    "At"     -> interior e $ liftM At     readText
-    "After"  -> interior e $ liftM After  readText
-    "Before" -> interior e $ liftM Before readText
+    N "At"     -> interior e $ liftM At     readText
+    N "After"  -> interior e $ liftM After  readText
+    N "Before" -> interior e $ liftM Before readText
 
-    "Not" -> interior e $ liftM  (UnOp Not)  parseObsCond
-    "And" -> interior e $ liftM2 (BinOp And) parseObsCond parseObsCond
-    "Or"  -> interior e $ liftM2 (BinOp Or)  parseObsCond parseObsCond
+    N "Not" -> interior e $ liftM  (UnOp Not)  parseObsCond
+    N "And" -> interior e $ liftM2 (BinOp And) parseObsCond parseObsCond
+    N "Or"  -> interior e $ liftM2 (BinOp Or)  parseObsCond parseObsCond
 
-    "Gt"  -> interior e $ liftM2 (BinOp Gt)  parseObsReal parseObsReal
-    "Gte" -> interior e $ liftM2 (BinOp Gte) parseObsReal parseObsReal
-    "Lt"  -> interior e $ liftM2 (BinOp Lt)  parseObsReal parseObsReal
-    "Lte" -> interior e $ liftM2 (BinOp Lte) parseObsReal parseObsReal
+    N "Gt"  -> interior e $ liftM2 (BinOp Gt)  parseObsReal parseObsReal
+    N "Gte" -> interior e $ liftM2 (BinOp Gte) parseObsReal parseObsReal
+    N "Lt"  -> interior e $ liftM2 (BinOp Lt)  parseObsReal parseObsReal
+    N "Lte" -> interior e $ liftM2 (BinOp Lte) parseObsReal parseObsReal
 
-    "IfThen" -> interior e $ liftM3 IfThen parseObsCond parseObsCond parseObsCond
+    N "IfThen" -> interior e $ liftM3 IfThen parseObsCond parseObsCond parseObsCond
 
 -- | Create XML tags
 printObs :: Obs a -> Content ()
