@@ -17,7 +17,7 @@ import           System.Exit               (ExitCode (..), exitFailure,
                                             exitWith)
 import           System.FilePath           (addExtension, dropExtension,
                                             takeDirectory, (</>))
-import           System.IO                 (hClose, hPutStr, openTempFile)
+import           System.IO                 (hClose, hPutStr, openTempFile, stderr)
 import           System.Process            (runProcess, waitForProcess)
 import           Text.XML.HaXml.Types
 import           Text.XML.HaXml.XmlContent
@@ -61,7 +61,6 @@ options = [Option [] ["obs-db"]
 
 main :: IO ()
 main =
-
   do
     plainArgs <- getArgs
     let (optMods, args, errs) = getOpt Permute options plainArgs
@@ -120,11 +119,10 @@ normalise opts input output =
 
     -- compile and run it
     ddir <- getDataDir
-    let ghcargs = [ "-package", "netrium-demo-"  ++ showVersion version ]
-                ++ [ "-i" ++ dir | dir <- ddir : optImportDirs opts ++ [cdir] ]
+    let ghcargs = [ "runghc", "--package", "netrium-demo", "--" ]
         args    = ghcargs ++ [fp]
     print args
-    ph <- runProcess "runghc" args Nothing Nothing Nothing Nothing Nothing
+    ph <- runProcess "stack" args Nothing Nothing Nothing Nothing Nothing
     exit <- waitForProcess ph
     removeFile fp
     when (exit /= ExitSuccess) exitFailure

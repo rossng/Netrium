@@ -1,1 +1,4 @@
 .stack-work/
+.idea/
+*.iml
+out/
